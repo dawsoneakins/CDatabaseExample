@@ -112,7 +112,7 @@ namespace CDatabaseExample
                         command.Parameters.AddWithValue("@Age", age);
 
                         int rowsAffected = command.ExecuteNonQuery();
-                        Console.WriteLine("Added the Person to the database");
+                        Console.WriteLine($"Added {name} to the database");
                         Console.WriteLine($"Rows Affected: {rowsAffected}");
                     }
 
@@ -148,7 +148,7 @@ namespace CDatabaseExample
 
                         int rowsAffected = command.ExecuteNonQuery();
 
-                        Console.WriteLine("Updated Name");
+                        Console.WriteLine($"Updated name from {name} to {updatedName}");
                         Console.WriteLine($"Rows Affected: {rowsAffected}");
                     }
                 }
@@ -168,7 +168,7 @@ namespace CDatabaseExample
 
         }
 
-        public void deletePerson(int personId, String name)
+        public void deletePerson(String name)
         {
             try
             {
@@ -177,17 +177,17 @@ namespace CDatabaseExample
 
                 connection.Open();
 
-                String sqlCommand = "DELETE FROM Person WHERE ID=@ID";
+                String sqlCommand = "DELETE FROM Person WHERE Name = @Name";
                 if (checkIfPersonExists(connection, name))
                 {
                     using (SqlCommand command = new SqlCommand(sqlCommand, connection))
                     {
-                        command.Parameters.AddWithValue("@ID", personId);
+                        command.Parameters.AddWithValue("@Name", name);
 
                         int rowsAffected = command.ExecuteNonQuery();
 
                         Console.WriteLine($"Rows Affected: {rowsAffected}");
-                        Console.WriteLine("Person has been deleted");
+                        Console.WriteLine($"{name} has been deleted");
                     }
                 }
             }
@@ -217,18 +217,22 @@ class PrintData
     public static void Main(string[] args)
     {
         Program program = new Program();
-        String personName = "Don Panini";
-        int personId = 0;
 
-        String newPersonName = "Carlos Spicy Weiner";
-        int newPersonAge = 30;
-        int newPersonId = 4;
+        int existingPersonId = 1;
+        String existingPersonName = "Carl Weathers";
+        String newPersonName = "Tom Tucker";
+        int newPersonAge = 40;
 
-        String updatedName = "Sado";
+        String updatedName = "Peter Griffin";
 
-        //program.addPerson(newPersonName, newPersonAge);
-        //program.updatePersonName(newPersonName, updatedName);
-        program.deletePerson(newPersonId, updatedName);
-        program.printPersonName(newPersonId);
+        program.printPersonId(existingPersonName);
+
+        program.printPersonName(existingPersonId);
+
+        program.addPerson(newPersonName, newPersonAge);
+
+        program.updatePersonName(newPersonName, updatedName);
+
+        program.deletePerson(updatedName);
     }
 }
