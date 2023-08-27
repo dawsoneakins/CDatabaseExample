@@ -1,20 +1,25 @@
 ﻿using CDatabaseExample;
+using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 
 namespace CDatabaseExample
 {
     class Program
     {
+        private string connectionString;
+
+        public Program(IConfiguration configuration)
+        {
+            connectionString = configuration?.GetConnectionString("MyConnectionString") ?? throw new ArgumentNullException(nameof(configuration));
+        }
+
         public void printPersonId(String personName)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection())
                 {
-                    connection.ConnectionString = "Data Source=DESKTOP-5E2DEFN;" +
-                        "Initial Catalog=CDatabaseExample;" +
-                        "User id=dawso;" +
-                        "Password=don;";
+                    connection.ConnectionString = connectionString;
                     connection.Open();
                     Console.WriteLine("Connection is Open");
 
@@ -54,10 +59,7 @@ namespace CDatabaseExample
             try
             {
                 SqlConnection connection = new SqlConnection();
-                connection.ConnectionString = "Data Source=DESKTOP-5E2DEFN;" +
-                        "Initial Catalog=CDatabaseExample;" +
-                        "User id=dawso;" +
-                        "Password=don;";
+                connection.ConnectionString = connectionString;
 
                 connection.Open();
 
@@ -92,10 +94,7 @@ namespace CDatabaseExample
         {
             using (SqlConnection connection = new SqlConnection())
             {
-                connection.ConnectionString = "Data Source=DESKTOP-5E2DEFN;" +
-                        "Initial Catalog=CDatabaseExample;" +
-                        "User id=dawso;" +
-                        "Password=don;";
+                connection.ConnectionString = connectionString;
 
                 connection.Open();
                 Console.WriteLine("Connection is Open");
@@ -129,10 +128,7 @@ namespace CDatabaseExample
             try
             {
                 SqlConnection connection = new SqlConnection();
-                connection.ConnectionString = "Data Source=DESKTOP-5E2DEFN;" +
-                            "Initial Catalog=CDatabaseExample;" +
-                            "User id=dawso;" +
-                            "Password=don;";
+                connection.ConnectionString = connectionString;
 
                 connection.Open();
                 Console.WriteLine("Connection has been opened");
@@ -173,7 +169,7 @@ namespace CDatabaseExample
             try
             {
                 SqlConnection connection = new SqlConnection();
-                connection.ConnectionString = "Data Source=DESKTOP-5E2DEFN;Initial Catalog=CDatabaseExample;User id=dawso;Password=don;";
+                connection.ConnectionString = connectionString;
 
                 connection.Open();
 
@@ -216,7 +212,12 @@ class PrintData
 {
     public static void Main(string[] args)
     {
-        Program program = new Program();
+        IConfiguration configuration = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        Program program = new Program(configuration);
 
         int existingPersonId = 1;
         String existingPersonName = "Carl Weathers";
